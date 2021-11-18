@@ -1,13 +1,11 @@
-import java.awt.Color;
-import java.awt.Container;
+package FScale;
+
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.Component;
 import java.awt.Frame;
-import javax.swing.JFrame;
-
 /**
  * A utility to scale Java AWT Components based on display size<br>
  * Works with swing JFrames, JPanels and all other subclasses of Frame
@@ -15,15 +13,11 @@ import javax.swing.JFrame;
 public class FScale {
 	private Dimension size;
 	private double scale;
-	public static void main(String[] args) {
-		JFrame frame = new JFrame("JFrame Scaling Demo");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		FScale s = new FScale();
-		s.initScale(frame, 200, 200);
-		System.out.println(Toolkit.getDefaultToolkit().isFrameStateSupported(JFrame.MAXIMIZED_BOTH));
-		//maximize(frame);
-		frame.setVisible(true);
-		Container pane = frame.getContentPane();
+	/**
+	 * Instantiate without initializing the Scale
+	 */
+	public FScale() {
+		
 	}
 	/**
 	 * Automatically scales a JFrame to fit the screen
@@ -32,13 +26,39 @@ public class FScale {
 	 * @param w	Canvas Width
 	 * @param h	Canvas Height
 	 * @param maxScale Maximum scaling size
-	 * @param minScale Minimun Scaling size
+	 * @param minScale Minimum Scaling size
 	 */
-	public void initScale(Component f, int w, int h, double maxScale, double minScale) {
-		initScale(f,w,h);
+	public FScale(Component f, int w, int h, double maxScale, double minScale) {
+		initScale(f, w, h, maxScale, minScale);
+	}
+	/**
+	 * Automatically scales a JFrame to fit the screen.<br>
+	 * Width and Height should be the dimensions the JFrame is designed at.
+	 * @param f JFrame to be scaled
+	 * @param w	Canvas Width
+	 * @param h	Canvas Height
+	 */
+	public FScale(Component f, int w, int h) {
+		initScale(f, w, h);
+	}
+	/**
+	 * Automatically scales a JFrame to fit the screen
+	 * Width and Height should be the dimensions the JFrame is designed at.
+	 * @param f JFrame to be scaled
+	 * @param w	Canvas Width
+	 * @param h	Canvas Height
+	 * @param maxScale Maximum scaling size
+	 * @param minScale Minimum Scaling size
+	 */
+	public void initScale(Component f, int w, int h, double minScale, double maxScale) {
+		size = Toolkit.getDefaultToolkit().getScreenSize();
+		double scaleX = size.getWidth()/w;
+		double scaleY = size.getHeight()/h;
+		scale = Math.min(scaleX, scaleY);
 		scale = Math.max(minScale, Math.min(maxScale, scale)); //clamping scale
-		f.setSize(new Dimension((int)(w*scale), (int)(h*scale)));	
-
+		Dimension d = new Dimension((int)(w*scale), (int)(h*scale));
+		f.setPreferredSize(d);	//seems to work for panels
+		f.setSize(d);	        //seems to work for frames
 	}
 	/**
 	 * Automatically scales a JFrame to fit the screen.<br>
@@ -48,12 +68,7 @@ public class FScale {
 	 * @param h	Canvas Height
 	 */
 	public void initScale(Component f, int w, int h) {
-		size = Toolkit.getDefaultToolkit().getScreenSize();
-		double scaleX = size.getWidth()/w;
-		double scaleY = size.getHeight()/h;
-		scale = Math.min(scaleX, scaleY);
-		scale = scale>1.2?1.2:scale;
-		f.setSize(new Dimension((int)(w*scale), (int)(h*scale)));	
+		initScale(f, w, h, 0, Double.POSITIVE_INFINITY);
 	}
 	/**
 	 * Scales a Graphics object according to the scale determined in initScale()<br>
@@ -72,5 +87,17 @@ public class FScale {
 	 */
 	public static void maximize(Frame f) {
 		f.setExtendedState(Frame.MAXIMIZED_BOTH);
+	}
+	/**
+	 * @return the size
+	 */
+	public Dimension getSize() {
+		return (Dimension)size.clone();
+	}
+	/**
+	 * @return the scale
+	 */
+	public double getScale() {
+		return scale;
 	}
 }
