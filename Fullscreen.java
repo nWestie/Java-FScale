@@ -3,20 +3,20 @@ package FScale;
 import java.awt.*;
 import javax.swing.*;
 
-import mainGame.Example;
-
-public class Example extends JPanel{
-	FScale s;
-	private Example() {
+public class Fullscreen extends JPanel{
+	private FScale s;
+	private Fullscreen() {
 		s = new FScale(this, 800, 600); //set up scaling, will appear to coder as a panel of 800x600
 	}
 	public static void main(String[] args) {
 		JFrame frame = new JFrame("JFrame Scaling Demo");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		Container cont = frame.getContentPane();
-		Example ex = new Example();
+		Fullscreen ex = new Fullscreen();
 		cont.add(ex);
-		FScale.maximize(frame);
+		frame.setUndecorated(true);
+		frame.pack();
+		//FScale.maximize(frame);
 		frame.setVisible(true);
 	}
 	@Override
@@ -28,5 +28,6 @@ public class Example extends JPanel{
 		setBackground(Color.black);
 		g.setColor(Color.gray);
 		g.fillRect(100, 100, 600, 400);
+		g.drawRect(1, 1, 798, 598);
 	}
 }
